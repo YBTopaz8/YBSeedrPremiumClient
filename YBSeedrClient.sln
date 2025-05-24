@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36121.58 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YBSeedrClient", "YBSeedrClient\YBSeedrClient.csproj", "{7EEBB49F-1417-878E-0C5B-5B6094D64F24}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeedrClient.Tests", "SeedrClient.Tests\SeedrClient.Tests.csproj", "{475C37E5-6035-1F84-D6D6-A36A82CB64D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7EEBB49F-1417-878E-0C5B-5B6094D64F24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EEBB49F-1417-878E-0C5B-5B6094D64F24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EEBB49F-1417-878E-0C5B-5B6094D64F24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{475C37E5-6035-1F84-D6D6-A36A82CB64D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{475C37E5-6035-1F84-D6D6-A36A82CB64D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{475C37E5-6035-1F84-D6D6-A36A82CB64D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{475C37E5-6035-1F84-D6D6-A36A82CB64D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
