@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using YBSeedrClient;
 using YBSeedrClient.Abstractions;
+using YBSeedrClient.Models;
 using static YBSeedrClient.SeedrModels;
 
 
@@ -24,9 +25,9 @@ public class SeedrApiServiceIntegrationTests
     private const string BaseApiUrl = "https://www.seedr.cc/rest";
     private List<long> _foldersToDelete = new List<long>();
     private List<long> _filesToDelete = new List<long>();
-    private List<long> _transfersToDelete = new List<long>(); 
+    private List<long> _transfersToDelete = new List<long>();
 
-    
+
     public TestContext TestContext { get; set; } = null!;
 
     [ClassInitialize]
@@ -39,12 +40,12 @@ public class SeedrApiServiceIntegrationTests
         if (string.IsNullOrWhiteSpace(_seedrEmail) || string.IsNullOrWhiteSpace(_seedrPassword))
         {
             Assert.Inconclusive("SEEDR_EMAIL or SEEDR_PASSWORD environment variables not set. Skipping integration tests.");
-            return; 
+            return;
         }
 
-        var httpClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true }) 
+        var httpClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = true })
         {
-            BaseAddress = new Uri(BaseApiUrl + "/") 
+            BaseAddress = new Uri(BaseApiUrl + "/")
         };
 
         var authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_seedrEmail}:{_seedrPassword}"));
@@ -79,14 +80,14 @@ public class SeedrApiServiceIntegrationTests
     {
         System.Diagnostics.Trace.WriteLine($"TestCleanup for: {TestContext.TestName}. Cleaning up created resources...");
         if (_seedrService == null)
-            return; 
+            return;
 
-        
-        
+
+
         foreach (var fileId in _filesToDelete.Distinct().Reverse())
         {
             System.Diagnostics.Trace.WriteLine($"Cleaning up file ID: {fileId}");
-            await _seedrService.DeleteFileAsync(fileId); 
+            await _seedrService.DeleteFileAsync(fileId);
         }
         foreach (var folderId in _foldersToDelete.Distinct().Reverse())
         {
@@ -103,8 +104,8 @@ public class SeedrApiServiceIntegrationTests
     [ClassCleanup]
     public static void ClassCleanup()
     {
-        
-        
+
+
         System.Diagnostics.Trace.WriteLine("ClassCleanup: Integration tests finished.");
     }
 
@@ -112,7 +113,7 @@ public class SeedrApiServiceIntegrationTests
     private void AddFileForCleanup(long fileId) => _filesToDelete.Add(fileId);
     private void AddTransferForCleanup(int transferId) => _transfersToDelete.Add(transferId);
 
-    
+
 
     [TestMethod]
     [TestCategory("Integration_User")]
@@ -124,9 +125,9 @@ public class SeedrApiServiceIntegrationTests
         var user = await _seedrService.GetUserDataAsync();
 
         Assert.IsNotNull(user, "GetUserDataAsync returned null.");
-Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
+        Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
         Assert.AreEqual(_currentUser.Username, user.Username, "Username mismatch.");
-        Assert.AreEqual(_seedrEmail, user.Email, "Email mismatch with configured email."); 
+        Assert.AreEqual(_seedrEmail, user.Email, "Email mismatch with configured email.");
     }
 
     [TestMethod]
@@ -137,7 +138,7 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
         var content = await _seedrService.ListRootFolderAsync();
 
         Assert.IsNotNull(content, "ListRootFolderAsync returned null.");
-        Assert.AreEqual("", content.Name, "Root folder name should be 'root'."); 
+        Assert.AreEqual("", content.Name, "Root folder name should be 'root'.");
         Assert.IsNotNull(content.Folders, "Folders list should not be null.");
         Assert.IsNotNull(content.Files, "Files list should not be null.");
     }
@@ -150,7 +151,7 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
         string originalFolderName = $"Yvan_{Guid.NewGuid().ToString().Substring(0, 8)}";
         string renamedFolderName = $"Renamed_YB_{originalFolderName}";
 
-        
+
         TestContext.WriteLine($"Attempting to create folder: {originalFolderName}");
         var createResult = await _seedrService.CreateFolderAsync(originalFolderName);
         Assert.IsNotNull(createResult, "CreateFolderAsync result was null.");
@@ -161,11 +162,11 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
 
         FolderContent? folders = await _seedrService.ListRootFolderAsync();
 
-        var fol = folders?.Folders.OrderByDescending(x=>x.LastUpdate).ToList();
+        var fol = folders?.Folders.OrderByDescending(x => x.LastUpdate).ToList();
         var f = fol?.FirstOrDefault()!;
         var folderId = f.Id;
 
-        var dlLink =  _seedrService.GetFolderLink(folderId);
+        var dlLink = _seedrService.GetFolderLink(folderId);
 
         System.Diagnostics.Trace.WriteLine($"TestInitialize for: {dlLink}");
         Assert.IsNotNull(dlLink, "GetFolderAsZipLinkAsync result was null.");
@@ -185,24 +186,24 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
         Assert.IsTrue(renameResult.Result, $"Failed to rename folder. Error: {renameResult.Error}");
         TestContext.WriteLine($"Folder {folderId} renamed.");
 
-        
+
 
         var folders2 = await _seedrService.ListRootFolderAsync();
         var folderContentAfterRename = await _seedrService.ListFolderAsync(folderId);
         Assert.IsNotNull(folderContentAfterRename, "Could not fetch renamed folder content.");
         Assert.AreEqual(renamedFolderName, folderContentAfterRename.Name, "Folder name was not updated after rename.");
 
-        
+
         TestContext.WriteLine($"Attempting to delete folder ID {folderId}");
         var deleteResult = await _seedrService.DeleteFolderAsync(folderId);
         Assert.IsNotNull(deleteResult, "DeleteFolderAsync result was null.");
         Assert.IsTrue(deleteResult.Result, $"Failed to delete folder. Error: {deleteResult.Error}");
         TestContext.WriteLine($"Folder {folderId} deleted.");
-        _foldersToDelete.Remove(folderId); 
+        _foldersToDelete.Remove(folderId);
 
-        
+
         var checkDeleted = await _seedrService.ListFolderAsync(folderId);
-        Assert.AreEqual(checkDeleted?.Result,false);
+        Assert.AreEqual(checkDeleted?.Result, false);
     }
 
 
@@ -211,10 +212,10 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
     public async Task AddMagnetAsync_Live_ValidMagnet_ShouldSucceedAndCleanup()
     {
         Assert.IsNotNull(_seedrService, "Service not initialized.");
-        
-        
-        
-        string testMagnet = "magnet:?xt=urn:btih:6D51445B88842875C2DBDBAA924DC78B9FE0358F&dn=RoadCraft-RUNE&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.theoks.net%3A6969%2Fannounce&tr=udp%3A%2F%2Fmovies.zsw.ca%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker-udp.gbitt.info%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce&tr=http%3A%2F%2Ftracker.gbitt.info%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.ccp.ovh%3A6969%2Fannounce&tr=https%3A%2F%2Ftracker.gbitt.info%3A443%2Fannounce&tr=udp%3A%2F%2Ftracker.dler.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.ccp.ovh%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce"; 
+
+
+
+        string testMagnet = "magnet:?xt=urn:btih:6D51445B88842875C2DBDBAA924DC78B9FE0358F&dn=RoadCraft-RUNE&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.moeking.me%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.theoks.net%3A6969%2Fannounce&tr=udp%3A%2F%2Fmovies.zsw.ca%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker-udp.gbitt.info%3A80%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6969%2Fannounce&tr=http%3A%2F%2Ftracker.gbitt.info%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.ccp.ovh%3A6969%2Fannounce&tr=https%3A%2F%2Ftracker.gbitt.info%3A443%2Fannounce&tr=udp%3A%2F%2Ftracker.dler.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.ccp.ovh%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Fcoppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.zer0day.to%3A1337%2Fannounce";
 
         var result = await _seedrService.AddMagnetAsync(testMagnet);
 
@@ -225,12 +226,12 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
 
         AddTransferForCleanup(result.UserTorrentId.Value);
 
-        
-        await Task.Delay(5000); 
-        var transferStatus = await _seedrService.GetTransferDataAsync(result.UserTorrentId.Value);
-        }
 
-    
+        await Task.Delay(5000);
+        var transferStatus = await _seedrService.GetTransferDataAsync(result.UserTorrentId.Value);
+    }
+
+
 
     [TestMethod]
     [TestCategory("Integration_File")]
@@ -238,8 +239,8 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
     public void DownloadFileAsync_Live_KnownFileId_ShouldDownload()
     {
         Assert.IsNotNull(_seedrService, "Service not initialized.");
-        
-        int knownFileId = -1; 
+
+        int knownFileId = -1;
         //string knownFileName = "test_download_file.dat"; 
 
         if (knownFileId == -1)
@@ -256,11 +257,11 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
         Assert.IsTrue(fileInfo.Length > 0, "Downloaded file is empty.");
         TestContext.WriteLine($"File downloaded successfully. Size: {fileInfo.Length} bytes.");
 
-        
+
         System.IO.File.Delete(tempOutputPath);
     }
 
-    
+
     [TestMethod]
     [TestCategory("Integration_Transfer_File")]
     [Ignore("Requires a pre-existing file ID or a more complex setup to create one.")]
@@ -269,7 +270,7 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
     {
         Assert.IsNotNull(_seedrService, "Service not initialized.");
 
-        string dummyTorrentContent = "d8:announce40:udp://tracker.openbittorrent.com:8013:creation datei1327050000e4:infod6:lengthi1e4:name10:dummy.txte12:piece lengthi65536e6:pieces20:aaaaaaaaaaaaaaaaaaaae"; 
+        string dummyTorrentContent = "d8:announce40:udp://tracker.openbittorrent.com:8013:creation datei1327050000e4:infod6:lengthi1e4:name10:dummy.txte12:piece lengthi65536e6:pieces20:aaaaaaaaaaaaaaaaaaaae";
         string tempTorrentFilePath = Path.Combine(Path.GetTempPath(), $"test_upload_{Guid.NewGuid().ToString().Substring(0, 6)}.torrent");
         await System.IO.File.WriteAllTextAsync(tempTorrentFilePath, dummyTorrentContent);
 
@@ -278,13 +279,13 @@ Assert.AreEqual(_currentUser.Id, user.Id, "User ID mismatch.");
         {
             using (var fileStream = new FileStream(tempTorrentFilePath, FileMode.Open, FileAccess.Read))
             {
-                
+
                 //result = await _seedrService.AddFileAsync(Path.GetFileName(tempTorrentFilePath),fileStream );
             }
 
             Assert.IsNotNull(result, "AddFileAsync result was null.");
-            
-            
+
+
             Assert.IsTrue(result.Result, $"Failed to upload .torrent file. Error: {result.Error}");
             Assert.IsNotNull(result.UserTorrentId, "UserTorrentId should be returned on successful .torrent file upload.");
             TestContext.WriteLine($".torrent file uploaded, UserTorrentId: {result.UserTorrentId.Value}");
