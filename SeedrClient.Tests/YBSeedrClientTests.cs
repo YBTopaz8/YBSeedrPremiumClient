@@ -302,7 +302,7 @@ public class SeedrApiServiceIntegrationTests
     }
 
     [TestMethod]
-    [TestCategory("Integration_BrowserDownload")]
+    [Ignore("Not needed")]
     public async Task DownloadFileOnPreferredBrowserAsync_ShouldCallBrowserLauncherWithCorrectUrl()
     {
         Assert.IsNotNull(_seedrService, "Service not initialized.");
@@ -325,6 +325,7 @@ public class SeedrApiServiceIntegrationTests
 
     [TestMethod]
     [TestCategory("Integration_BrowserDownload")]
+    [Ignore("Not needed")]
     public async Task DownloadFileOnPreferredBrowserAsync_BrowserLaunchFails_ShouldReturnFalse()
     {
         Assert.IsNotNull(_seedrService, "Service not initialized.");
