@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <PackageId>YBSeedrClient</PackageId>
+    <Version>1.0.0-alpha</Version>
+    <Authors>Yvan Brunel</Authors>
+    <Company>Yvan Brunel</Company>
+    <Description>A .NET client library for interacting with the Seedr.cc API, allowing management of files, folders, and torrent transfers.</Description>
+    <Copyright>Copyright © $([System.DateTime]::Now.Year) Yvan Brunel</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/YBTopaz8/YBSeedr.NET</PackageProjectUrl>
+    <PackageIcon>seedrico.png</PackageIcon>
+    
+    <RepositoryUrl>https://github.com/YBTopaz8/YBSeedr.NET.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>seedr api client torrent cloud-storage downloader yvan</PackageTags>
+    <PackageReleaseNotes>Initial alpha release.</PackageReleaseNotes>
+    
+
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    
+    <IsAotCompatible>true</IsAotCompatible>
+    <IsTrimmable>true</IsTrimmable>
+
+  </PropertyGroup>
+
+  
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5" />
+    
+    
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="seedrico.png" Pack="true" PackagePath="\" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" Condition="Exists('..\README.md')" />
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="\" Condition="Exists('..\LICENSE.txt')" />
+  </ItemGroup>
+
+</Project>

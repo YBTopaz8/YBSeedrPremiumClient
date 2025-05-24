@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YBSeedrClient", "YBSeedrClient\YBSeedrClient.csproj", "{7EEBB49F-1417-878E-0C5B-5B6094D64F24}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7EEBB49F-1417-878E-0C5B-5B6094D64F24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EEBB49F-1417-878E-0C5B-5B6094D64F24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EEBB49F-1417-878E-0C5B-5B6094D64F24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EEBB49F-1417-878E-0C5B-5B6094D64F24}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {72330128-207D-432A-8333-58D25508E9D1}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/YBSeedrClient/.vs/YBSeedrClient/CopilotIndices/17.14.698.11175
+/YBSeedrClient/.vs/YBSeedrClient/FileContentIndex
+/YBSeedrClient/obj
